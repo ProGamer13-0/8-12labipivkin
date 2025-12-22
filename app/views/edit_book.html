@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Дописать логбук{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 60px auto; border-image: linear-gradient(45deg, var(--nakama-blue), var(--grand-line-blue)) 1;">
+    <div class="card-header" style="text-align: center; border: none; padding-bottom: 0; position: relative;">
+        <div style="font-size: 4rem; color: var(--straw-hat-yellow); margin-bottom: 16px; text-shadow: 3px 3px 0 var(--nakama-blue);">
+            <i class="fas fa-feather-pointed"></i>
+        </div>
+        <h2 class="card-title" style="font-size: 2.5rem;">
+            <i class="fas fa-scroll-old"></i> ДОПИСАТЬ ЛОГБУК
+        </h2>
+        <p style="color: var(--marine-blue); margin-top: 8px; font-size: 1.2rem; font-style: italic;">
+            Каждая строка — шаг к Великому Сокровищу!
+        </p>
+
+        <!-- Уровень важности -->
+        <div style="position: absolute; top: 20px; right: 20px;">
+            <div style="background: var(--straw-hat-red); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; border: 3px solid var(--straw-hat-yellow); box-shadow: 0 0 15px rgba(198, 40, 40, 0.5);">
+                <i class="fas fa-exclamation-circle"></i> ЗАПИСИ КАПИТАНА
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body" style="padding-top: 8px;">
+        <form method="POST">
+            <!-- Поля ввода -->
+            <div class="form-group">
+                <label class="form-label" style="color: var(--marine-blue); font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                    <div style="background: var(--straw-hat-red); color: white; padding: 8px; border-radius: 50%;">
+                        <i class="fas fa-heading"></i>
+                    </div>
+                    НАЗВАНИЕ ЛОГБУКА
+                </label>
+                <input type="text" name="title" class="form-control"
+                       value="{{ book.title }}" required autofocus
+                       style="padding: 16px; font-size: 1.1rem; border: 3px solid var(--nakama-blue); background: rgba(255, 255, 255, 0.95);">
+                <div style="color: var(--devil-fruit-purple); font-size: 0.9rem; margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-lightbulb"></i>
+                    Будь краток, но ёмок — как выстрел из пистолета!
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" style="color: var(--marine-blue); font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                    <div style="background: var(--nakama-blue); color: white; padding: 8px; border-radius: 50%;">
+                        <i class="fas fa-user-pen"></i>
+                    </div>
+                    АВТОР-ПЕРВООТКРЫВАТЕЛЬ
+                </label>
+                <input type="text" name="author" class="form-control"
+                       value="{{ book.author }}" required
+                       style="padding: 16px; font-size: 1.1rem; border: 3px solid var(--nakama-blue); background: rgba(255, 255, 255, 0.95);">
+                <div style="color: var(--devil-fruit-purple); font-size: 0.9rem; margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-crown"></i>
+                    Имя того, кто ступил на землю первым
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" style="color: var(--marine-blue); font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                    <div style="background: var(--bounty-gold); color: white; padding: 8px; border-radius: 50%;">
+                        <i class="fas fa-book-open-reader"></i>
+                    </div>
+                    СОДЕРЖАНИЕ ЛОГБУКА
+                </label>
+                <textarea name="content" rows="12" class="form-control"
+                          placeholder="Опиши свои приключения подробно... Штормы, сражения, найденные сокровища, встреченные существа..."
+                          style="padding: 16px; font-size: 1.1rem; border: 3px solid var(--nakama-blue); background: rgba(255, 255, 255, 0.95); resize: vertical; min-height: 300px;">{{ book.content or '' }}</textarea>
+                <div style="color: var(--devil-fruit-purple); font-size: 0.9rem; margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-pen-fancy"></i>
+                    Пиши от души — этот логбук прочтут будущие поколения!
+                </div>
+            </div>
+
+            <!-- Кнопки действий -->
+            <div style="display: flex; gap: 20px; margin-top: 40px; flex-wrap: wrap;">
+                <button type="submit" class="btn btn-primary" style="flex: 1; padding: 18px; font-size: 1.3rem; min-width: 200px;">
+                    <i class="fas fa-save" style="margin-right: 15px;"></i>
+                    СОХРАНИТЬ В СУНДУК
+                </button>
+
+                <a href="{{ url_for('books.view_book', book_id=book.id) }}"
+                   class="btn btn-secondary"
+                   style="flex: 1; padding: 18px; font-size: 1.3rem; min-width: 200px;">
+                    <i class="fas fa-eye" style="margin-right: 15px;"></i>
+                    ПРЕДПРОСМОТР
+                </a>
+
+                <a href="{{ url_for('books.list_books') }}"
+                   class="btn btn-info"
+                   style="flex: 1; padding: 18px; font-size: 1.3rem; min-width: 200px;">
+                    <i class="fas fa-ship" style="margin-right: 15px;"></i>
+                    К ЛОГБУКАМ
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Подсказки по ведению логбука -->
+<div class="card" style="max-width: 800px; margin: 30px auto; background: linear-gradient(135deg, rgba(255, 214, 0, 0.1), rgba(255, 235, 59, 0.1)); border: 3px solid var(--straw-hat-yellow);">
+    <div class="card-header" style="background: var(--straw-hat-yellow); padding: 15px; text-align: center;">
+        <h3 style="color: var(--marine-blue); font-size: 1.4rem; margin: 0;">
+            <i class="fas fa-lightbulb" style="margin-right: 10px;"></i>
+            СОВЕТЫ СТАРОГО КАРТОГРАФА
+        </h3>
+    </div>
+    <div class="card-body">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div style="text-align: center;">
+                <div style="font-size: 2.5rem; color: var(--straw-hat-red); margin-bottom: 10px;">
+                    📅
+                </div>
+                <div style="font-weight: bold; color: var(--marine-blue); margin-bottom: 8px;">
+                    ДАТИРУЙ КАЖДУЮ ЗАПИСЬ
+                </div>
+                <div style="color: var(--devil-fruit-purple); font-size: 0.9rem;">
+                    Время — твой лучший штурман
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <div style="font-size: 2.5rem; color: var(--nakama-blue); margin-bottom: 10px;">
+                    🧭
+                </div>
+                <div style="font-weight: bold; color: var(--marine-blue); margin-bottom: 8px;">
+                    УКАЗЫВАЙ КООРДИНАТЫ
+                </div>
+                <div style="color: var(--devil-fruit-purple); font-size: 0.9rem;">
+                    Чтобы другие могли найти путь
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <div style="font-size: 2.5rem; color: var(--den-den-mushi-green); margin-bottom: 10px;">
+                    ⚠️
+                </div>
+                <div style="font-weight: bold; color: var(--marine-blue); margin-bottom: 8px;">
+                    ОТМЕЧАЙ ОПАСНОСТИ
+                </div>
+                <div style="color: var(--devil-fruit-purple); font-size: 0.9rem;">
+                    Предупреди будущих исследователей
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Пример оформления -->
+<div class="card" style="max-width: 800px; margin: 30px auto; background: linear-gradient(135deg, rgba(123, 31, 162, 0.1), rgba(156, 39, 176, 0.1)); border: 3px solid var(--devil-fruit-purple);">
+    <div class="card-header">
+        <h4 style="color: var(--devil-fruit-purple); font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-gem"></i>
+            ОБРАЗЕЦ ХОРОШЕГО ЛОГБУКА
+        </h4>
+    </div>
+    <div class="card-body">
+        <div style="background: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 10px; border-left: 5px solid var(--straw-hat-red); font-family: 'Seaweed Script', cursive;">
+            <p style="color: var(--marine-blue); margin-bottom: 15px; font-size: 1.1rem;">
+                <strong style="color: var(--straw-hat-red);">Дата:</strong> 15-й день плавания<br>
+                <strong style="color: var(--straw-hat-red);">Координаты:</strong> 25°N, 60°W<br>
+                <strong style="color: var(--straw-hat-red);">Погода:</strong> Шторм утих, море спокойно
+            </p>
+            <p style="color: var(--pirate-black); line-height: 1.6; font-style: italic;">
+                Сегодня нашли необитаемый остров. На северном берегу обнаружили пещеру с древними письменами.
+                В глубине — сундук с золотыми монетами и карта, ведущая к следующему острову.
+                <span style="color: var(--straw-hat-red); font-weight: bold;">Внимание:</span> пещера охраняется гигантским крабом!
+            </p>
+            <p style="color: var(--bounty-gold); margin-top: 15px; text-align: right;">
+                — Записано капитаном {{ current_user.username }}
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Кнопка удаления -->
+<div style="text-align: center; margin: 40px 0;">
+    <a href="{{ url_for('books.delete_book', book_id=book.id) }}"
+       class="delete-link"
+       onclick="return confirmPirate('Точно выбросить этот логбук за борт? Он утонет навеки!')"
+       style="padding: 12px 30px; font-size: 1.1rem; border-width: 3px;">
+        <i class="fas fa-trash-can" style="margin-right: 10px;"></i>
+        ВЫБРОСИТЬ ЛОГБУК ЗА БОРТ
+    </a>
+</div>
+
+<!-- Пиратское напутствие -->
+<div style="text-align: center; margin: 50px 0 30px; padding: 30px; border-top: 3px dashed var(--straw-hat-yellow); border-bottom: 3px dashed var(--straw-hat-yellow);">
+    <div style="font-size: 2.5rem; color: var(--straw-hat-red); margin-bottom: 20px;">
+        <i class="fas fa-quote-left"></i>
+    </div>
+    <p style="font-size: 1.2rem; color: var(--marine-blue); max-width: 600px; margin: 0 auto; font-style: italic; line-height: 1.8;">
+        "Историю пишут победители. А пираты пишут её чернилами из собственной крови!"
+    </p>
+    <div style="color: var(--straw-hat-red); font-weight: bold; margin-top: 15px;">
+        — Шанкс Рыжий
+    </div>
+</div>
+{% endblock %}

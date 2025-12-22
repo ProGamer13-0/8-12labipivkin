@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+<h1>Главная</h1>
+<p>Добро пожаловать в библиотеку!</p>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Название</th>
+        <th>Автор</th>
+    </tr>
+    {% for book in books %}
+    <tr>
+        <td>{{ book.id }}</td>
+        <td>{{ book.title }}</td>
+        <td>{{ book.author }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

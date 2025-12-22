@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Пиратские логбуки{% endblock %}
+
+{% block content %}
+<div class="card fade-in">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+        <div>
+            <h2 class="card-title" style="font-size: 2.2rem;">
+                <i class="fas fa-book-journal-whills"></i> МОИ ЛОГБУКИ
+                <span class="bounty-badge" style="font-size: 1.2rem; padding: 8px 16px;">{{ books|length }} 📚</span>
+            </h2>
+            <p style="color: var(--marine-blue); margin-top: 5px; font-size: 1.1rem; font-style: italic;">
+                Записи о приключениях на пути к One Piece
+            </p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <span style="color: var(--straw-hat-yellow); font-weight: bold; font-size: 1.2rem; background: rgba(255, 214, 0, 0.2); padding: 8px 15px; border-radius: 20px; border: 2px solid var(--straw-hat-yellow);">
+                <i class="fas fa-crown"></i> КАПИТАН {{ current_user.username }}
+                <span class="bounty-badge" style="margin-left: 10px;">{{ (current_user.id * 500)|int }}฿</span>
+            </span>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <!-- Новый логбук - Карта сокровищ -->
+        <div class="card" style="background: linear-gradient(135deg, rgba(255, 248, 225, 0.9), rgba(255, 235, 59, 0.3)); border: 4px dashed var(--straw-hat-yellow); margin-bottom: 40px;">
+            <h3 style="color: var(--marine-blue); margin-bottom: 20px; text-align: center; font-size: 1.5rem; font-family: 'Pirata One', cursive;">
+                <i class="fas fa-map-marked-alt" style="color: var(--straw-hat-red);"></i> СОСТАВИТЬ НОВУЮ КАРТУ
+            </h3>
+            <form method="POST" action="{{ url_for('books.add_book') }}">
+                <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; align-items: end;">
+                    <div>
+                        <input type="text" name="title" class="form-control"
+                               placeholder="Название острова/приключения" required
+                               style="text-align: center; font-size: 1.1rem;">
+                        <small style="color: var(--grand-line-blue); display: block; text-align: center; margin-top: 8px;">
+                            <i class="fas fa-island-tropical"></i> Куда мы плывём?
+                        </small>
+                    </div>
+                    <div>
+                        <input type="text" name="author" class="form-control"
+                               placeholder="Кто открыл/описал" required
+                               style="text-align: center; font-size: 1.1rem;">
+                        <small style="color: var(--grand-line-blue); display: block; text-align: center; margin-top: 8px;">
+                            <i class="fas fa-user-pirate"></i> Чья это заслуга?
+                        </small>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary" style="height: 50px; min-width: 120px; font-size: 1.1rem;">
+                            <i class="fas fa-feather-alt"></i> ЗАПЕЧАТАТЬ
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Архив логбуков -->
+        <h3 style="color: var(--straw-hat-red); margin-bottom: 25px; border-bottom: 3px solid var(--straw-hat-red); padding-bottom: 15px; font-size: 1.8rem; font-family: 'Pirata One', cursive;">
+            <i class="fas fa-archive"></i> АРХИВ ПРИКЛЮЧЕНИЙ
+            <span style="color: var(--marine-blue); font-size: 1rem; float: right;">
+                Всего записей в логбуке: {{ books|length }}
+            </span>
+        </h3>
+
+        {% if books %}
+        <ul class="book-list">
+            {% for book in books %}
+            <li class="book-item fade-in" style="animation-delay: {{ loop.index * 0.1 }}s;">
+                <div class="book-content">
+                    <div class="book-title" style="font-size: 1.3rem;">
+                        <i class="fas fa-book-open" style="color: var(--straw-hat-red);"></i> «{{ book.title }}»
+                    </div>
+                    <div class="book-author" style="font-size: 1.1rem;">
+                        <i class="fas fa-user-secret" style="color: var(--devil-fruit-purple);"></i> Автор-первооткрыватель: {{ book.author }}
+                    </div>
+                </div>
+                <div class="book-actions">
+                    <a href="{{ url_for('books.view_book', book_id=book.id) }}"
+                       class="btn btn-info btn-icon"
+                       title="Изучить карту">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a href="{{ url_for('books.edit_book', book_id=book.id) }}"
+                       class="btn btn-secondary btn-icon"
+                       title="Перерисовать карту">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{{ url_for('books.delete_book', book_id=book.id) }}"
+                       class="btn btn-danger btn-icon"
+                       onclick="return confirmPirate('Сжечь эту карту? Приключение будет забыто навсегда!')"
+                       title="Сжечь карту">
+                        <i class="fas fa-fire"></i>
+                    </a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="card" style="text-align: center; padding: 60px 40px; background: rgba(255, 248, 225, 0.8); border: 4px dashed var(--straw-hat-yellow); border-radius: 20px;">
+            <div style="font-size: 5rem; color: var(--straw-hat-yellow); margin-bottom: 30px; opacity: 0.7;">
+                <i class="fas fa-book-dead"></i>
+            </div>
+            <h3 style="color: var(--marine-blue); margin-bottom: 20px; font-size: 1.8rem; font-family: 'Pirata One', cursive;">
+                ЛОГБУК ПУСТ
+            </h3>
+            <p style="color: var(--pirate-black); max-width: 500px; margin: 0 auto; font-size: 1.1rem; line-height: 1.6; font-style: italic;">
+                Ни одна карта не лежит в этом сундуке. Твоё первое приключение станет началом легенды!
+                Вспомни: даже Гол Д. Роджер начинал с чистого листа.
+            </p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Статистика плавания -->
+<div class="card fade-in" style="margin-top: 40px; border-image: linear-gradient(45deg, var(--bounty-gold), var(--straw-hat-yellow)) 1;">
+    <div class="card-header">
+        <h3 class="card-title" style="font-size: 1.8rem;">
+            <i class="fas fa-chart-line" style="color: var(--devil-fruit-purple);"></i> СТАТИСТИКА ПЛАВАНИЯ
+        </h3>
+    </div>
+    <div class="card-body">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 25px;">
+            <div style="text-align: center; padding: 25px; background: linear-gradient(135deg, rgba(198, 40, 40, 0.1), rgba(255, 82, 82, 0.1)); border: 3px solid var(--straw-hat-red); border-radius: 15px;">
+                <div style="font-size: 3rem; font-weight: bold; color: var(--straw-hat-red); margin-bottom: 10px; font-family: 'Pirata One', cursive;">
+                    {{ books|length }}
+                </div>
+                <div style="color: var(--marine-blue); text-transform: uppercase; font-size: 1rem; font-weight: bold;">
+                    <i class="fas fa-book"></i> Карт в коллекции
+                </div>
+            </div>
+
+            <div style="text-align: center; padding: 25px; background: linear-gradient(135deg, rgba(21, 101, 192, 0.1), rgba(33, 150, 243, 0.1)); border: 3px solid var(--nakama-blue); border-radius: 15px;">
+                <div style="font-size: 3rem; font-weight: bold; color: var(--nakama-blue); margin-bottom: 10px; font-family: 'Pirata One', cursive;">
+                    {{ current_user.id|default(1) }}
+                </div>
+                <div style="color: var(--marine-blue); text-transform: uppercase; font-size: 1rem; font-weight: bold;">
+                    <i class="fas fa-sun"></i> Уровень пирата
+                </div>
+            </div>
+
+            <div style="text-align: center; padding: 25px; background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 179, 0, 0.1)); border: 3px solid var(--bounty-gold); border-radius: 15px;">
+                <div style="font-size: 3rem; font-weight: bold; color: var(--bounty-gold); margin-bottom: 10px; font-family: 'Pirata One', cursive;">
+                    {% if books|length > 0 %}
+                        {{ (books|length * 2500)|int }}
+                    {% else %}
+                        0
+                    {% endif %}
+                </div>
+                <div style="color: var(--marine-blue); text-transform: uppercase; font-size: 1rem; font-weight: bold;">
+                    <i class="fas fa-coins"></i> Награда за голову
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Цитата Белоуса -->
+<div class="card fade-in" style="margin-top: 40px; background: linear-gradient(135deg, rgba(128, 222, 234, 0.2), rgba(3, 169, 244, 0.2)); border: 3px solid var(--all-blue);">
+    <div class="card-body" style="text-align: center; padding: 40px;">
+        <div style="font-size: 2.5rem; color: var(--all-blue); margin-bottom: 20px;">
+            <i class="fas fa-quote-left"></i>
+        </div>
+        <p style="font-size: 1.3rem; color: var(--marine-blue); line-height: 1.6; font-style: italic; max-width: 700px; margin: 0 auto;">
+            "Мечты... У парней никогда не кончаются сны!"
+        </p>
+        <div style="color: var(--all-blue); font-size: 1.1rem; margin-top: 20px; font-family: 'Pirata One', cursive;">
+            — Маршал Д. Тич (Чёрная Борода)
+        </div>
+        <div style="margin-top: 30px;">
+            <span class="bounty-badge" style="font-size: 1.1rem; padding: 10px 20px; background: linear-gradient(45deg, var(--pirate-black), #424242);">2,247,600,000฿</span>
+        </div>
+    </div>
+</div>
+
+<!-- Подсказки от навигатора -->
+<div style="text-align: center; color: var(--marine-blue); padding: 30px 0; font-size: 1rem; max-width: 800px; margin: 40px auto; background: rgba(255, 255, 255, 0.8); border-radius: 15px; border: 2px solid var(--straw-hat-yellow);">
+    <h4 style="color: var(--straw-hat-red); margin-bottom: 15px; font-size: 1.2rem; font-family: 'Pirata One', cursive;">
+        <i class="fas fa-compass"></i> СОВЕТЫ ШТУРМАНА
+    </h4>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+        <div>
+            <i class="fas fa-lightbulb" style="color: var(--straw-hat-yellow); margin-right: 8px;"></i>
+            Подробные записи спасают в шторм
+        </div>
+        <div>
+            <i class="fas fa-user-friends" style="color: var(--nakama-blue); margin-right: 8px;"></i>
+            Делись знаниями с командой
+        </div>
+        <div>
+            <i class="fas fa-sync-alt" style="color: var(--grand-line-blue); margin-right: 8px;"></i>
+            Карты синхронизируются автоматически
+        </div>
+    </div>
+</div>
+
+<!-- Кнопка быстрого возврата -->
+<div style="text-align: center; margin-top: 30px;">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary" style="padding: 15px 30px; font-size: 1.1rem;">
+        <i class="fas fa-anchor" style="margin-right: 10px;"></i>
+        Вернуться на главную палубу
+    </a>
+</div>
+{% endblock %}
